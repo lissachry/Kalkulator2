@@ -1,0 +1,122 @@
+/* ===== Reset & dasar ===== */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+/* ===== Kartu kalkulator ===== */
+.container {
+  background: #ffffff;
+  width: 100%;
+  max-width: 420px;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+}
+
+h1 {
+  font-size: 22px;
+  text-align: center;
+  color: #333;
+  margin-bottom: 4px;
+}
+
+.subtitle {
+  text-align: center;
+  font-size: 13px;
+  color: #888;
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #444;
+  margin-bottom: 6px;
+}
+
+select,
+input {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 15px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  outline: none;
+  transition: border-color 0.2s;
+  margin-bottom: 14px;
+}
+
+select:focus,
+input:focus {
+  border-color: #667eea;
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.1s, opacity 0.2s;
+}
+
+button:hover {
+  opacity: 0.92;
+}
+
+button:active {
+  transform: scale(0.98);
+}
+
+/* ===== Kotak hasil ===== */
+#hasil {
+  margin-top: 18px;
+}
+
+.hasil-box {
+  background: #f4f6ff;
+  border-left: 5px solid #667eea;
+  border-radius: 8px;
+  padding: 14px 16px;
+}
+
+.hasil-box h3 {
+  font-size: 15px;
+  color: #4b4b8f;
+  margin-bottom: 10px;
+}
+
+.hasil-box p {
+  font-size: 15px;
+  color: #333;
+  margin: 6px 0;
+}
+
+.hasil-box strong {
+  color: #667eea;
+  font-size: 17px;
+}
+
+.error {
+  color: #d32f2f;
+  font-size: 14px;
+  text-align: center;
+  font-weight: 600;
+  }
