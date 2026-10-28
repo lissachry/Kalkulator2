@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kalkulator Bangun Ruang</title>
+
+  <!-- ================= CSS ================= -->
+  <style>
+    /* ===== Reset & dasar ===== */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    /* ===== Kartu kalkulator ===== */
+    .container {
+      background: #ffffff;
+      width: 100%;
+      max-width: 420px;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+    }
+
+    h1 {
+      font-size: 22px;
+      text-align: center;
+      color: #333;
+      margin-bottom: 4px;
+    }
+
+    .subtitle {
+      text-align: center;
+      font-size: 13px;
+      color: #888;
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      color: #444;
+      margin-bottom: 6px;
+    }
+
+    select,
+    input {
+      width: 100%;
+      padding: 10px 12px;
+      font-size: 15px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      outline: none;
+      transition: border-color 0.2s;
+      margin-bottom: 14px;
+    }
+
+    select:focus,
+    input:focus {
+      border-color: #667eea;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: transform 0.1s, opacity 0.2s;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    button:active {
+      transform: scale(0.98);
+    }
+
+    /* ===== Kotak hasil ===== */
+    #hasil {
+      margin-top: 18px;
+    }
+
+    .hasil-box {
+      background: #f4f6ff;
+      border-left: 5px solid #667eea;
+      border-radius: 8px;
+      padding: 14px 16px;
+    }
+
+    .hasil-box h3 {
+      font-size: 15px;
+      color: #4b4b8f;
+      margin-bottom: 10px;
+    }
+
+    .hasil-box p {
+      font-size: 15px;
+      color: #333;
+      margin: 6px 0;
+    }
+
+    .hasil-box strong {
+      color: #667eea;
+      font-size: 17px;
+    }
+
+    .error {
+      color: #d32f2f;
+      font-size: 14px;
+      text-align: center;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>📐 Kalkulator Bangun Ruang</h1>
+    <p class="subtitle">Hitung volume & luas permukaan</p>
+
+    <label for="pilihBangun">Pilih Bangun Ruang</label>
+    <select id="pilihBangun">
+      <option value="kubus">Kubus</option>
+      <option value="balok">Balok</option>
+      <option value="tabung">Tabung</option>
+      <option value="bola">Bola</option>
+      <option value="kerucut">Kerucut</option>
+      <option value="limas">Limas Segiempat</option>
+    </select>
+
+    <div id="inputArea"></div>
+
+    <button id="btnHitung">Hitung</button>
+
+    <div id="hasil"></div>
+  </div>
+
+  <!-- ================= JAVASCRIPT ================= -->
+  <script>
+    /* =====================================================
+       1. DATA RUMUS SETIAP BANGUN RUANG
+    ===================================================== */
+    const dataBangun = {
+      kubus: {
+        nama: "Kubus",
+        fields: [{ id: "s", label: "Panjang Sisi (s)" }],
+        rumus: (x) => ({
+          volume: x.s ** 3,
+          luas: 6 * x.s ** 2
+        })
+      },
+
+      balok: {
+        nama: "Balok",
+        fields: [
+          { id: "p", label: "Panjang (p)" },
+          { id: "l", label: "Lebar (l)" },
+          { id: "t", label: "Tinggi (t)" }
+        ],
+        rumus: (x) => ({
+          volume: x.p * x.l * x.t,
+          luas: 2 * (x.p * x.l + x.p * x.t + x.l * x.t)
+        })
+      },
+
+      tabung: {
+        nama: "Tabung",
+        fields: [
+          { id: "r", label: "Jari-jari (r)" },
+          { id: "t", label: "Tinggi (t)" }
+        ],
+        rumus: (x) => ({
+          volume: Math.PI * x.r ** 2 * x.t,
+          luas: 2 * Math.PI * x.r * (x.r + x.t)
+        })
+      },
+
+      bola: {
+        nama: "Bola",
+        fields: [{ id: "r", label: "Jari-jari (r)" }],
+        rumus: (x) => ({
+          volume: (4 / 3) * Math.PI * x.r ** 3,
+          luas: 4 * Math.PI * x.r ** 2
+        })
+      },
+
+      kerucut: {
+        nama: "Kerucut",
+        fields: [
+          { id: "r", label: "Jari-jari (r)" },
+          { id: "t", label: "Tinggi (t)" }
+        ],
+        rumus: (x) => {
+          const s = Math.sqrt(x.r ** 2 + x.t ** 2);
+          return {
+            volume: (1 / 3) * Math.PI * x.r ** 2 * x.t,
+            luas: Math.PI * x.r * (x.r + s)
+          };
+        }
+      },
+
+      limas: {
+        nama: "Limas Segiempat",
+        fields: [
+          { id: "s", label: "Sisi Alas (s)" },
+          { id: "t", label: "Tinggi Limas (t)" }
+        ],
+        rumus: (x) => {
+          const ts = Math.sqrt((x.s / 2) ** 2 + x.t ** 2);
+          return {
+            volume: (1 / 3) * x.s ** 2 * x.t,
+            luas: x.s ** 2 + 4 * (0.5 * x.s * ts)
+          };
+        }
+      }
+    };
+
+    /* =====================================================
+       2. AMBIL ELEMEN HTML
+    ===================================================== */
+    const select = document.getElementById("pilihBangun");
+    const inputArea = document.getElementById("inputArea");
+    const hasil = document.getElementById("hasil");
+    const btnHitung = document.getElementById("btnHitung");
+
+    /* =====================================================
+       3. TAMPILKAN INPUT SESUAI BANGUN YANG DIPILIH
+    ===================================================== */
+    function tampilkanInput() {
+      const bangun = dataBangun[select.value];
+      inputArea.innerHTML = "";
+      hasil.innerHTML = "";
+
+      bangun.fields.forEach((f) => {
+        const div = document.createElement("div");
+        div.innerHTML = `
+          <label for="${f.id}">${f.label}</label>
+          <input type="number" id="${f.id}" placeholder="Masukkan angka" step="any" min="0">
+        `;
+        inputArea.appendChild(div);
+      });
+    }
+
+    /* =====================================================
+       4. FUNGSI HITUNG
+    ===================================================== */
+    function hitung() {
+      const bangun = dataBangun[select.value];
+      const nilai = {};
+
+      for (const f of bangun.fields) {
+        const input = document.getElementById(f.id);
+        const angka = parseFloat(input.value);
+
+        if (isNaN(angka) || angka <= 0) {
+          hasil.innerHTML = `<p class="error">⚠️ Semua kolom harus diisi angka lebih dari 0.</p>`;
+          return;
+        }
+        nilai[f.id] = angka;
+      }
+
+      const r = bangun.rumus(nilai);
+
+      hasil.innerHTML = `
+        <div class="hasil-box">
+          <h3>Hasil Perhitungan ${bangun.nama}</h3>
+          <p>Volume: <strong>${r.volume.toFixed(2)}</strong> satuan³</p>
+          <p>Luas Permukaan: <strong>${r.luas.toFixed(2)}</strong> satuan²</p>
+        </div>
+      `;
+    }
+
+    /* =====================================================
+       5. EVENT LISTENER & INISIALISASI
+    ===================================================== */
+    select.addEventListener("change", tampilkanInput);
+    btnHitung.addEventListener("click", hitung);
+
+    tampilkanInput();
+  </script>
+
+</body>
+  </html>
